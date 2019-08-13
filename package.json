@@ -1,0 +1,29 @@
+{
+  "name": "blue-jump",
+  "version": "0.1.0",
+  "description": "basic platformer game inspired by Doodle Jump",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nout-kleef/blue-jump.git"
+  },
+  "keywords": [
+    "game",
+    "platformer",
+    "p5.js",
+    "graphic",
+    "js"
+  ],
+  "author": "Nout Kleef",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/nout-kleef/blue-jump/issues"
+  },
+  "homepage": "https://github.com/nout-kleef/blue-jump#readme",
+  "dependencies": {
+    "p5": "^0.9.0"
+  }
+}
