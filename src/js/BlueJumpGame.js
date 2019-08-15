@@ -195,6 +195,7 @@ BlueJumpGame.JUMP_POWER;
 BlueJumpGame.TEXT_SIZE = BlueJumpGame.BARRIER_SCALE * 0.5;
 BlueJumpGame.FONT;
 BlueJumpGame.pfx = ["webkit", "moz", "ms", "o", ""];
+BlueJumpGame.field;
 BlueJumpGame.IS_SAFARI = Object.prototype.toString
     .call(window.HTMLElement).indexOf('Constructor') > 0;
 BlueJumpGame.prefix = (obj, method) => {

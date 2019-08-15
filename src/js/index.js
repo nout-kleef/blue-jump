@@ -15,7 +15,8 @@ function setup() {
     } else {
         createCanvas(window.screen.width, window.screen.height);
     }
-    // document.getElementById("defaultCanvas0").getContext("2d");
+    BlueJumpGame.field =
+        document.getElementById("defaultCanvas0").getContext("2d");
     colorMode(RGB);
     bj.colours = [
         color(64, 112, 184),
