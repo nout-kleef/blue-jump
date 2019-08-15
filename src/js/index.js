@@ -189,7 +189,7 @@ function draw() {
                 text('Player', xoff + 1.2 * BlueJumpGame.TEXT_SIZE, 1.7 * BlueJumpGame.TEXT_SIZE + 115);
                 text('Score', xoff + 8 * BlueJumpGame.TEXT_SIZE, 1.7 * BlueJumpGame.TEXT_SIZE + 115);
                 fill(255, 255, 255);
-                showRanks(xoff);
+                // showRanks(xoff);
             }
     }
     // show player's score

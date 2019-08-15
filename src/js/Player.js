@@ -176,8 +176,8 @@ function Player(x, y) {
     }
     this.burying;
     this.bury = function () {
-        pushRank(this.stats.score);
-        getRanks();
+        // pushRank(this.stats.score);
+        // getRanks();
         this.shouldUpdate = false;
         this.burying = setInterval(function () {
             player.p.y += 2;
