@@ -1,32 +1,33 @@
-function TextAnimation(txt, beginSize, finalSize, transition, delay1, color, creation, x, y) {
-    this.currentSize = beginSize - (beginSize % finalSize);
-    this.finalSize = finalSize;
-    this.decrease = (this.currentSize - this.finalSize) / transition;
-    this.transition = transition;
-    this.x = x;
-    this.y = y;
-    this.color = color;
-    this.text = txt;
-    this.delay1 = delay1;
-    this.creation = creation;
-    this.update = function () {
-        if (this.currentSize > this.finalSize) {
-            this.currentSize -= this.decrease
-        }
+class Text {
+    constructor(
+        text, beginSize, finalSize, transition, delay, colour, creation, x, y
+    ) {
+        this.text = text;
+        this.finalSize = finalSize;
+        this.currentSize = beginSize - (beginSize % finalSize); // TODO: check this
+        this.decrease = (this.currentSize - this.finalSize) / transition;
+        this.transition = transition;
+        this.delay = delay;
+        this.colour = colour;
+        this.creation = creation;
+        this.x = typeof x === 'undefined' ? width / 2 : x;
+        this.y = typeof y === 'undefined' ? height / 2 : y;
     }
-    this.show = function () {
+
+    update() {
+        if (this.currentSize > this.finalSize) this.currentSize -= this.decrease;
+    }
+
+    show() {
         textSize(this.currentSize);
         textAlign(CENTER);
-        fill(this.color);
+        fill(this.colour);
         stroke(255);
         strokeWeight(6);
-        text(this.text, (this.x === undefined ? width / 2 : this.x), (this.y === undefined ? height / 2 : this.y));
+        text(this.text, this.x, this.y);
     }
-    this.delete = function () {
-        if (frameCount <= this.transition + this.delay1 + this.creation) {
-            return true;
-        } else {
-            return false;
-        }
+
+    shouldBeDeleted() {
+        return frameCount <= this.transition + this.delay + this.creation;
     }
 }

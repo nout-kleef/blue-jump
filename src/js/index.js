@@ -92,7 +92,7 @@ function draw() {
     else BlueJumpGame.lava.show(150, 50);
     // show any text "animations"
     for (let i = 0; i < bj.textAnimations.length; i++) {
-        if (bj.textAnimations[i].delete()) {
+        if (bj.textAnimations[i].shouldBeDeleted()) {
             bj.textAnimations[i].update();
             bj.textAnimations[i].show();
         } else bj.textAnimations[i].splice(i, 1);
