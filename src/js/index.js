@@ -1,7 +1,3 @@
-import {
-    rejects
-} from "assert";
-
 let bj;
 
 function preload() {
