@@ -43,6 +43,10 @@ function pipeHtml(cb) {
 }
 // javascript
 function pipeJs(cb) {
+	// p5.js
+	gulp.src(node + "p5/lib/p5.js")
+		.pipe(gulp.dest(assets + "js/"));
+	// custom files
 	gulp.src([src + "js/*.js"]).on("error", logError)
 		.pipe(sourcemaps.init())
 		.pipe(concat("blueJump.js")).on("error", logError)
