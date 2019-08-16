@@ -2,7 +2,7 @@ import {
     rejects
 } from "assert";
 
-const bj;
+let bj;
 
 function preload() {
     BlueJumpGame.FONT = loadFont('assets/fonts/robot01.ttf');
