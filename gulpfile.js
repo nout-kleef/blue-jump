@@ -8,10 +8,20 @@ const src = "./src/",
 // PLUGINS
 const gulp = require('gulp'),
 	del = require("del"),
+	gutil = require('gulp-util'),
+	sourcemaps = require("gulp-sourcemaps"),
 	concat = require("gulp-concat"),
 	uglify = require('gulp-uglify-es').default;
 
 // TASK MODULES
+// error reporting
+function logError(error) {
+	gutil.log(
+		gutil.colors.red('\n!! !! !!\n!! !! !!\n!! !! !!'),
+		"\nERROR OCCURRED"
+	);
+	gutil.log(gutil.colors.red('[Error]'), error.toString());
+}
 // cleanup
 function clean(cb) {
 	// delete all existing assets and html to prevent caching issues
@@ -33,10 +43,13 @@ function pipeHtml(cb) {
 }
 // javascript
 function pipeJs(cb) {
-	gulp.src([src + "js/*.js"])
-		.pipe(concat("blueJump.js"))
-		.pipe(uglify())
-		.pipe(gulp.dest(assets + "js/"));
+	gulp.src([src + "js/*.js"]).on("error", logError)
+		.pipe(sourcemaps.init())
+		.pipe(concat("blueJump.js")).on("error", logError)
+		.pipe(uglify()).on("error", logError)
+		// todo: add .min suffix
+		.pipe(sourcemaps.write())
+		.pipe(gulp.dest(assets + "js/")).on("error", logError);
 	cb();
 }
 
