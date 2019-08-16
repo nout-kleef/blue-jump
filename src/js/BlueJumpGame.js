@@ -228,8 +228,8 @@ BlueJumpGame.IS_SAFARI = Object.prototype.toString
 document.getElementById("dirt0").onload = () => {
     BlueJumpGame.dirt0 = [
         document.getElementById("dirt0"),
-        BARRIER_SCALE,
-        0.25 * BARRIER_SCALE,
+        BlueJumpGame.BARRIER_SCALE,
+        0.25 * BlueJumpGame.BARRIER_SCALE,
         1,
         false,
         0,
@@ -239,8 +239,8 @@ document.getElementById("dirt0").onload = () => {
 document.getElementById("spikes").onload = () => {
     BlueJumpGame.spikes = new Floor(
         document.getElementById("spikes"),
-        5 / 3 * BARRIER_SCALE,
-        0.513 * BARRIER_SCALE,
+        5 / 3 * BlueJumpGame.BARRIER_SCALE,
+        0.513 * BlueJumpGame.BARRIER_SCALE,
         1,
         false,
         0,
@@ -250,8 +250,8 @@ document.getElementById("spikes").onload = () => {
 document.getElementById("lava").onload = () => {
     BlueJumpGame.lava = new Floor(
         document.getElementById("lava"),
-        5 / 3 * BARRIER_SCALE,
-        0.558 * BARRIER_SCALE,
+        5 / 3 * BlueJumpGame.BARRIER_SCALE,
+        0.558 * BlueJumpGame.BARRIER_SCALE,
         5,
         true,
         0,
@@ -261,8 +261,8 @@ document.getElementById("lava").onload = () => {
 document.getElementById("bricks0").onload = () => {
     BlueJumpGame.bricks0 = [
         document.getElementById("bricks0"),
-        BARRIER_SCALE,
-        0.25 * BARRIER_SCALE,
+        BlueJumpGame.BARRIER_SCALE,
+        0.25 * BlueJumpGame.BARRIER_SCALE,
         1,
         false,
         0,
@@ -272,8 +272,8 @@ document.getElementById("bricks0").onload = () => {
 document.getElementById("bricks1").onload = () => {
     BlueJumpGame.bricks1 = [
         document.getElementById("bricks1"),
-        BARRIER_SCALE,
-        0.25 * BARRIER_SCALE,
+        BlueJumpGame.BARRIER_SCALE,
+        0.25 * BlueJumpGame.BARRIER_SCALE,
         1,
         false,
         0,
