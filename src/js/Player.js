@@ -72,15 +72,15 @@ class Player {
         }
         this.v.x = 0;
         if (BlueJumpGame.MOBILE_CONTROLS) { // mobile controls
-            this.v.x = BlueJumpGame.MOVEMENT * orientedMovement;
+            this.v.x = BlueJumpGame.HORIZONTAL_SPEED * orientedMovement;
         } else { // keyboard controls
             if (
                 (keyDown(37) || keyDown('a')) !== (keyDown(39) || keyDown('d'))
             ) {
                 if (this.stats.alive) this.walk();
                 if (keyDown(37) || keyDown('a'))
-                    this.v.x = -BlueJumpGame.MOVEMENT;
-                else this.v.x = BlueJumpGame.MOVEMENT;
+                    this.v.x = -BlueJumpGame.HORIZONTAL_SPEED;
+                else this.v.x = BlueJumpGame.HORIZONTAL_SPEED;
             }
         }
         this.p.x = constrain(this.p.x + this.v.x, 0, width - this.activities[this.activity].width);
