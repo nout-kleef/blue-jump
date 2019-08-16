@@ -41,6 +41,12 @@ function pipeHtml(cb) {
 		.pipe(gulp.dest(dist));
 	cb();
 }
+// fonts
+function pipeFonts(cb) {
+	gulp.src(src + "fonts/*.ttf")
+		.pipe(gulp.dest(assets + "fonts/"));
+	cb();
+}
 // javascript
 function pipeJs(cb) {
 	// p5.js
@@ -59,7 +65,7 @@ function pipeJs(cb) {
 
 // TASK COMPOSITIONS
 // builds assets
-const generate = gulp.parallel(pipeJs, pipeImg, pipeHtml);
+const generate = gulp.parallel(pipeJs, pipeImg, pipeHtml, pipeFonts);
 // cleans, then builds
 const build = gulp.series(clean, generate);
 
