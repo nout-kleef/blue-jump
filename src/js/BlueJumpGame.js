@@ -87,7 +87,7 @@ class BlueJumpGame {
                 0,
                 BARRIER_SCALE,
                 0.25 * BARRIER_SCALE,
-                new SpriteAnimation(
+                new Sprite(
                     dirtblock[0],
                     dirtblock[1],
                     dirtblock[2],
@@ -162,12 +162,12 @@ class BlueJumpGame {
             maxX = constrain(maxX, 0, width);
             var increaseY = (0.3 + 0.7 * Math.random()) * maxY;
             var newX = constrain(oldPos.x + dir * (0.3 + 0.7 * Math.random()) * maxX, MOVEMENT, width - BARRIER_SCALE - MOVEMENT);
-            barriers.push(new Barrier(newX, oldPos.y - increaseY, 1, -3 + 6 * Math.random() * constr, 0, 0, BARRIER_SCALE, 0.25 * BARRIER_SCALE, new SpriteAnimation(txtr[0], txtr[1], txtr[2], txtr[3], txtr[4], txtr[5], txtr[6]), 150, h));
+            barriers.push(new Barrier(newX, oldPos.y - increaseY, 1, -3 + 6 * Math.random() * constr, 0, 0, BARRIER_SCALE, 0.25 * BARRIER_SCALE, new Sprite(txtr[0], txtr[1], txtr[2], txtr[3], txtr[4], txtr[5], txtr[6]), 150, h));
         } else {
             var x = 10 + Math.random() * (width - 110);
             var y = inSight ? -200 + Math.random() * ((isSafari ? windowHeight : window.screen.height) + 200) : -200 + Math.random() * 175;
             var z = 2 + Math.random() * 1.1;
-            fakeBarriers.push(new Barrier(x, y, z, 0, 0, 0, BARRIER_SCALE, 0.25 * BARRIER_SCALE, new SpriteAnimation(txtr[0], txtr[1] / z, txtr[2] / z, txtr[3], txtr[4], txtr[5], txtr[6]), 150, h));
+            fakeBarriers.push(new Barrier(x, y, z, 0, 0, 0, BARRIER_SCALE, 0.25 * BARRIER_SCALE, new Sprite(txtr[0], txtr[1] / z, txtr[2] / z, txtr[3], txtr[4], txtr[5], txtr[6]), 150, h));
         }
     }
 

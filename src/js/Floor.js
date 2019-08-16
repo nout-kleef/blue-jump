@@ -1,6 +1,6 @@
 class Floor {
     constructor(img, displayWidth, displayHeight, framesCount, action) {
-        this.sprite = new SpriteAnimation(
+        this.sprite = new Sprite(
             img, displayWidth, displayHeight, framesCount, action, 0, 0, 30
         );
         this.repeats = Math.ceil(window.screen.width / displayWidth);

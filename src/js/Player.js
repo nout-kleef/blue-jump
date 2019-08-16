@@ -27,12 +27,12 @@ class Player {
         };
         this.activity = 0;
         this.activities = [
-            new SpriteAnimation(arguments[2][0], arguments[2][1], arguments[2][2], arguments[2][3], arguments[2][4], arguments[2][5], arguments[2][6])
+            new Sprite(arguments[2][0], arguments[2][1], arguments[2][2], arguments[2][3], arguments[2][4], arguments[2][5], arguments[2][6])
         ];
         for (let i = 3; i <= 6; i++) {
             if (typeof arguments[i] !== 'undefined') {
                 this.activities.push(
-                    new SpriteAnimation(
+                    new Sprite(
                         arguments[i][0], arguments[i][1], arguments[i][2], arguments[i][3], arguments[i][4], arguments[i][5], arguments[i][6]
                     )
                 );
