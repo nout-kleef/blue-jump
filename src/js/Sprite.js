@@ -31,12 +31,13 @@ class Sprite {
             frameIndex = 0;
             this.count++;
         }
-        BlueJumpGame.field.drawImage(
+        console.log(this.img);
+        image(
             this.img,
-            frameIndex * srcWidth, 0,
-            srcWidth, srcHeight,
             x, y,
-            this.displayWidth, this.displayHeight
+            this.displayWidth, this.displayHeight,
+            frameIndex * srcWidth, 0,
+            srcWidth, srcHeight
         );
     }
 }

@@ -34,50 +34,29 @@ class BlueJumpGame {
         this.player = new Player( // TODO: refactor this. drastically.
             width / 2 - BlueJumpGame.BARRIER_SCALE / 3,
             height * 3 / 4,
-            [
-                document.getElementById("blueguy02"),
-                2 * BlueJumpGame.BARRIER_SCALE / 3,
-                2 * BlueJumpGame.BARRIER_SCALE / 3,
-                7,
-                true,
-                18,
-                18
-            ], [
-                document.getElementById("blueguy03"),
-                2 * BlueJumpGame.BARRIER_SCALE / 3,
-                2 * BlueJumpGame.BARRIER_SCALE / 3,
-                10,
-                false,
-                19,
-                19
-            ], [
-                document.getElementById("blueguy04"),
-                2 * BlueJumpGame.BARRIER_SCALE / 3,
-                2 * BlueJumpGame.BARRIER_SCALE / 3,
-                6,
-                false,
-                19,
-                19
-            ], [
-                document.getElementById("transition"),
-                2 * BlueJumpGame.BARRIER_SCALE / 3,
-                2.2 * BlueJumpGame.BARRIER_SCALE / 3,
-                1,
-                false,
-                0,
-                0
-            ], [
-                document.getElementById("grave"),
-                2 * BlueJumpGame.BARRIER_SCALE / 3,
-                2.2 * BlueJumpGame.BARRIER_SCALE / 3,
-                1,
-                false,
-                0,
-                0
-            ]
+            BlueJumpGame.blueGuy02,
+            BlueJumpGame.blueGuy03,
+            BlueJumpGame.blueGuy04,
+            BlueJumpGame.transition,
+            BlueJumpGame.grave
+        );
+        // create the floors
+        BlueJumpGame.spikesFloor = new Floor(
+            BlueJumpGame.spikes[0],
+            BlueJumpGame.spikes[1],
+            BlueJumpGame.spikes[2],
+            BlueJumpGame.spikes[3],
+            BlueJumpGame.spikes[4]
+        );
+        BlueJumpGame.lavaFloor = new Floor(
+            BlueJumpGame.lava[0],
+            BlueJumpGame.lava[1],
+            BlueJumpGame.lava[2],
+            BlueJumpGame.lava[3],
+            BlueJumpGame.lava[4]
         );
         // set up first barrier
-        console.log(BlueJumpGame.dirt0);
+        console.log(BlueJumpGame.dirtblock);
         this.barriers.push( // TODO: refactor this too
             new Barrier(
                 this.player.p.x + 0.5 * this.player.activities[this.player.activity].width - 0.5 * BlueJumpGame.BARRIER_SCALE,
@@ -89,13 +68,13 @@ class BlueJumpGame {
                 BlueJumpGame.BARRIER_SCALE,
                 0.25 * BlueJumpGame.BARRIER_SCALE,
                 new Sprite(
-                    BlueJumpGame.dirt0[0],
-                    BlueJumpGame.dirt0[1],
-                    BlueJumpGame.dirt0[2],
-                    BlueJumpGame.dirt0[3],
-                    BlueJumpGame.dirt0[4],
-                    BlueJumpGame.dirt0[5],
-                    BlueJumpGame.dirt0[6]),
+                    BlueJumpGame.dirtblock[0],
+                    BlueJumpGame.dirtblock[1],
+                    BlueJumpGame.dirtblock[2],
+                    BlueJumpGame.dirtblock[3],
+                    BlueJumpGame.dirtblock[4],
+                    BlueJumpGame.dirtblock[5],
+                    BlueJumpGame.dirtblock[6]),
                 150,
                 46
             )
@@ -142,14 +121,14 @@ class BlueJumpGame {
     pickNewHighest(oldPos, pickRandom, inSight) { // TODO: refactor
         let h, txtr;
         if (this.player.stats.alive) {
-            txtr = BlueJumpGame.dirt0;
+            txtr = BlueJumpGame.dirtblock;
             h = 46;
         } else {
             if (Math.random() < 0.25) {
-                txtr = brickblock;
+                txtr = BlueJumpGame.brickblock0;
                 h = 46;
             } else {
-                txtr = brickblock2;
+                txtr = BlueJumpGame.brickblock1;
                 h = 33;
             }
         }
@@ -226,68 +205,93 @@ BlueJumpGame.field;
 BlueJumpGame.IS_SAFARI = Object.prototype.toString
     .call(window.HTMLElement).indexOf('Constructor') > 0;
 // load assets
-document.getElementById("dirt0").onload = testFunction;
-
-function testFunction() {
-    console.log(47837398423174);
-}
-document.getElementById("dirt0").onload = function () {
-    console.info("dirt loaded.");
-    BlueJumpGame.dirt0 = [
-        document.getElementById("dirt0"),
-        BlueJumpGame.BARRIER_SCALE,
-        0.25 * BlueJumpGame.BARRIER_SCALE,
-        1,
-        false,
-        0,
-        0
-    ];
-}
-document.getElementById("spikes").onload = function () {
-    console.info("dirt loaded.");
-    BlueJumpGame.spikes = new Floor(
-        document.getElementById("spikes"),
-        5 / 3 * BlueJumpGame.BARRIER_SCALE,
-        0.513 * BlueJumpGame.BARRIER_SCALE,
-        1,
-        false,
-        0,
-        0
-    );
-}
-document.getElementById("lava").onload = function () {
-    console.info("dirt loaded.");
-    BlueJumpGame.lava = new Floor(
-        document.getElementById("lava"),
-        5 / 3 * BlueJumpGame.BARRIER_SCALE,
-        0.558 * BlueJumpGame.BARRIER_SCALE,
-        5,
-        true,
-        0,
-        0
-    );
-}
-document.getElementById("bricks0").onload = function () {
-    console.info("dirt loaded.");
-    BlueJumpGame.bricks0 = [
-        document.getElementById("bricks0"),
-        BlueJumpGame.BARRIER_SCALE,
-        0.25 * BlueJumpGame.BARRIER_SCALE,
-        1,
-        false,
-        0,
-        0
-    ];
-}
-document.getElementById("bricks1").onload = function () {
-    console.info("dirt loaded.");
-    BlueJumpGame.bricks1 = [
-        document.getElementById("bricks1"),
-        BlueJumpGame.BARRIER_SCALE,
-        0.25 * BlueJumpGame.BARRIER_SCALE,
-        1,
-        false,
-        0,
-        0
-    ];
-}
+BlueJumpGame.dirtblock = [
+    null, // will be populated later - see preload()
+    BlueJumpGame.BARRIER_SCALE,
+    0.25 * BlueJumpGame.BARRIER_SCALE,
+    1,
+    false,
+    0,
+    0
+];
+BlueJumpGame.spikes = [
+    null, // will be populated later - see preload()
+    5 / 3 * BlueJumpGame.BARRIER_SCALE,
+    0.513 * BlueJumpGame.BARRIER_SCALE,
+    1,
+    false,
+    0,
+    0
+];
+BlueJumpGame.lava = [
+    null, // will be populated later - see preload()
+    5 / 3 * BlueJumpGame.BARRIER_SCALE,
+    0.558 * BlueJumpGame.BARRIER_SCALE,
+    5,
+    true,
+    0,
+    0
+];
+BlueJumpGame.brickblock0 = [
+    null, // will be populated later - see preload()
+    BlueJumpGame.BARRIER_SCALE,
+    0.25 * BlueJumpGame.BARRIER_SCALE,
+    1,
+    false,
+    0,
+    0
+];
+BlueJumpGame.brickblock1 = [
+    null, // will be populated later - see preload()
+    BlueJumpGame.BARRIER_SCALE,
+    0.25 * BlueJumpGame.BARRIER_SCALE,
+    1,
+    false,
+    0,
+    0
+];
+BlueJumpGame.blueGuy02 = [
+    null, // will be populated later - see preload()
+    2 * BlueJumpGame.BARRIER_SCALE / 3,
+    2 * BlueJumpGame.BARRIER_SCALE / 3,
+    7,
+    true,
+    18,
+    18
+];
+BlueJumpGame.blueGuy03 = [
+    null, // will be populated later - see preload()
+    2 * BlueJumpGame.BARRIER_SCALE / 3,
+    2 * BlueJumpGame.BARRIER_SCALE / 3,
+    10,
+    false,
+    19,
+    19
+];
+BlueJumpGame.blueGuy04 = [
+    null, // will be populated later - see preload()
+    2 * BlueJumpGame.BARRIER_SCALE / 3,
+    2 * BlueJumpGame.BARRIER_SCALE / 3,
+    6,
+    false,
+    19,
+    19
+];
+BlueJumpGame.transition = [
+    null, // will be populated later - see preload()
+    2 * BlueJumpGame.BARRIER_SCALE / 3,
+    2.2 * BlueJumpGame.BARRIER_SCALE / 3,
+    1,
+    false,
+    0,
+    0
+];
+BlueJumpGame.grave = [
+    null, // will be populated later - see preload()
+    2 * BlueJumpGame.BARRIER_SCALE / 3,
+    2.2 * BlueJumpGame.BARRIER_SCALE / 3,
+    1,
+    false,
+    0,
+    0
+];
