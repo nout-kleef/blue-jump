@@ -32,44 +32,44 @@ class BlueJumpGame {
         }
         // initialise player
         this.player = new Player( // TODO: refactor this. drastically.
-            width / 2 - BARRIER_SCALE / 3,
+            width / 2 - BlueJumpGame.BARRIER_SCALE / 3,
             height * 3 / 4,
             [
                 document.getElementById("blueguy02"),
-                2 * BARRIER_SCALE / 3,
-                2 * BARRIER_SCALE / 3,
+                2 * BlueJumpGame.BARRIER_SCALE / 3,
+                2 * BlueJumpGame.BARRIER_SCALE / 3,
                 7,
                 true,
                 18,
                 18
             ], [
                 document.getElementById("blueguy03"),
-                2 * BARRIER_SCALE / 3,
-                2 * BARRIER_SCALE / 3,
+                2 * BlueJumpGame.BARRIER_SCALE / 3,
+                2 * BlueJumpGame.BARRIER_SCALE / 3,
                 10,
                 false,
                 19,
                 19
             ], [
                 document.getElementById("blueguy04"),
-                2 * BARRIER_SCALE / 3,
-                2 * BARRIER_SCALE / 3,
+                2 * BlueJumpGame.BARRIER_SCALE / 3,
+                2 * BlueJumpGame.BARRIER_SCALE / 3,
                 6,
                 false,
                 19,
                 19
             ], [
                 document.getElementById("transition"),
-                2 * BARRIER_SCALE / 3,
-                2.2 * BARRIER_SCALE / 3,
+                2 * BlueJumpGame.BARRIER_SCALE / 3,
+                2.2 * BlueJumpGame.BARRIER_SCALE / 3,
                 1,
                 false,
                 0,
                 0
             ], [
                 document.getElementById("grave"),
-                2 * BARRIER_SCALE / 3,
-                2.2 * BARRIER_SCALE / 3,
+                2 * BlueJumpGame.BARRIER_SCALE / 3,
+                2.2 * BlueJumpGame.BARRIER_SCALE / 3,
                 1,
                 false,
                 0,
@@ -77,24 +77,25 @@ class BlueJumpGame {
             ]
         );
         // set up first barrier
-        barriers.push( // TODO: refactor this too
+        console.log(BlueJumpGame.dirt0);
+        this.barriers.push( // TODO: refactor this too
             new Barrier(
-                this.player.p.x + 0.5 * this.player.activities[this.player.activity].width - 0.5 * BARRIER_SCALE,
+                this.player.p.x + 0.5 * this.player.activities[this.player.activity].width - 0.5 * BlueJumpGame.BARRIER_SCALE,
                 this.player.p.y + this.player.activities[this.player.activity].height,
                 1,
                 0,
                 0,
                 0,
-                BARRIER_SCALE,
-                0.25 * BARRIER_SCALE,
+                BlueJumpGame.BARRIER_SCALE,
+                0.25 * BlueJumpGame.BARRIER_SCALE,
                 new Sprite(
-                    dirtblock[0],
-                    dirtblock[1],
-                    dirtblock[2],
-                    dirtblock[3],
-                    dirtblock[4],
-                    dirtblock[5],
-                    dirtblock[6]),
+                    BlueJumpGame.dirt0[0],
+                    BlueJumpGame.dirt0[1],
+                    BlueJumpGame.dirt0[2],
+                    BlueJumpGame.dirt0[3],
+                    BlueJumpGame.dirt0[4],
+                    BlueJumpGame.dirt0[5],
+                    BlueJumpGame.dirt0[6]),
                 150,
                 46
             )
@@ -139,9 +140,9 @@ class BlueJumpGame {
     }
 
     pickNewHighest(oldPos, pickRandom, inSight) { // TODO: refactor
-        var h;
-        if (player.stats.alive) {
-            txtr = dirtblock;
+        let h, txtr;
+        if (this.player.stats.alive) {
+            txtr = BlueJumpGame.dirt0;
             h = 46;
         } else {
             if (Math.random() < 0.25) {
@@ -153,21 +154,21 @@ class BlueJumpGame {
             }
         }
         if (!pickRandom) {
-            var difficulty = Math.floor(player.stats.score / 2500) * 0.02 * BARRIER_SCALE;
-            difficulty = constrain(difficulty, 0, 0.5 * BARRIER_SCALE);
-            var constr = CONTROLS === 1 ? 0.5 : 0.80;
-            var dir = Math.random() < 0.5 ? 1 : -1;
-            var maxY = 0.5 * (JUMP_POWER * JUMP_POWER + JUMP_POWER) / GRAVITY;
-            var maxX = 1.7 * JUMP_POWER * HORIZONTAL_SPEED * constr * 1.2 + difficulty;
+            const difficulty = Math.floor(this.player.stats.score / 2500) * 0.02 * BlueJumpGame.BARRIER_SCALE;
+            difficulty = constrain(difficulty, 0, 0.5 * BlueJumpGame.BARRIER_SCALE);
+            const constr = BlueJumpGame.MOBILE_CONTROLS ? 0.5 : 0.80;
+            const dir = Math.random() < 0.5 ? 1 : -1;
+            const maxY = 0.5 * (BlueJumpGame.JUMP_POWER * BlueJumpGame.JUMP_POWER + BlueJumpGame.JUMP_POWER) / BlueJumpGame.GRAVITY;
+            const maxX = 1.7 * BlueJumpGame.JUMP_POWER * BlueJumpGame.HORIZONTAL_SPEED * constr * 1.2 + difficulty;
             maxX = constrain(maxX, 0, width);
-            var increaseY = (0.3 + 0.7 * Math.random()) * maxY;
-            var newX = constrain(oldPos.x + dir * (0.3 + 0.7 * Math.random()) * maxX, MOVEMENT, width - BARRIER_SCALE - MOVEMENT);
-            barriers.push(new Barrier(newX, oldPos.y - increaseY, 1, -3 + 6 * Math.random() * constr, 0, 0, BARRIER_SCALE, 0.25 * BARRIER_SCALE, new Sprite(txtr[0], txtr[1], txtr[2], txtr[3], txtr[4], txtr[5], txtr[6]), 150, h));
+            const increaseY = (0.3 + 0.7 * Math.random()) * maxY;
+            const newX = constrain(oldPos.x + dir * (0.3 + 0.7 * Math.random()) * maxX, BlueJumpGame.MOVEMENT, width - BlueJumpGame.BARRIER_SCALE - BlueJumpGame.MOVEMENT);
+            this.barriers.push(new Barrier(newX, oldPos.y - increaseY, 1, -3 + 6 * Math.random() * constr, 0, 0, BlueJumpGame.BARRIER_SCALE, 0.25 * BlueJumpGame.BARRIER_SCALE, new Sprite(txtr[0], txtr[1], txtr[2], txtr[3], txtr[4], txtr[5], txtr[6]), 150, h));
         } else {
-            var x = 10 + Math.random() * (width - 110);
-            var y = inSight ? -200 + Math.random() * ((isSafari ? windowHeight : window.screen.height) + 200) : -200 + Math.random() * 175;
-            var z = 2 + Math.random() * 1.1;
-            fakeBarriers.push(new Barrier(x, y, z, 0, 0, 0, BARRIER_SCALE, 0.25 * BARRIER_SCALE, new Sprite(txtr[0], txtr[1] / z, txtr[2] / z, txtr[3], txtr[4], txtr[5], txtr[6]), 150, h));
+            const x = 10 + Math.random() * (width - 110);
+            const y = inSight ? -200 + Math.random() * ((BlueJumpGame.IS_SAFARI ? windowHeight : window.screen.height) + 200) : -200 + Math.random() * 175;
+            const z = 2 + Math.random() * 1.1;
+            this.fakeBarriers.push(new Barrier(x, y, z, 0, 0, 0, BlueJumpGame.BARRIER_SCALE, 0.25 * BlueJumpGame.BARRIER_SCALE, new Sprite(txtr[0], txtr[1] / z, txtr[2] / z, txtr[3], txtr[4], txtr[5], txtr[6]), 150, h));
         }
     }
 
@@ -225,7 +226,13 @@ BlueJumpGame.field;
 BlueJumpGame.IS_SAFARI = Object.prototype.toString
     .call(window.HTMLElement).indexOf('Constructor') > 0;
 // load assets
-document.getElementById("dirt0").onload = () => {
+document.getElementById("dirt0").onload = testFunction;
+
+function testFunction() {
+    console.log(47837398423174);
+}
+document.getElementById("dirt0").onload = function () {
+    console.info("dirt loaded.");
     BlueJumpGame.dirt0 = [
         document.getElementById("dirt0"),
         BlueJumpGame.BARRIER_SCALE,
@@ -236,7 +243,8 @@ document.getElementById("dirt0").onload = () => {
         0
     ];
 }
-document.getElementById("spikes").onload = () => {
+document.getElementById("spikes").onload = function () {
+    console.info("dirt loaded.");
     BlueJumpGame.spikes = new Floor(
         document.getElementById("spikes"),
         5 / 3 * BlueJumpGame.BARRIER_SCALE,
@@ -247,7 +255,8 @@ document.getElementById("spikes").onload = () => {
         0
     );
 }
-document.getElementById("lava").onload = () => {
+document.getElementById("lava").onload = function () {
+    console.info("dirt loaded.");
     BlueJumpGame.lava = new Floor(
         document.getElementById("lava"),
         5 / 3 * BlueJumpGame.BARRIER_SCALE,
@@ -258,7 +267,8 @@ document.getElementById("lava").onload = () => {
         0
     );
 }
-document.getElementById("bricks0").onload = () => {
+document.getElementById("bricks0").onload = function () {
+    console.info("dirt loaded.");
     BlueJumpGame.bricks0 = [
         document.getElementById("bricks0"),
         BlueJumpGame.BARRIER_SCALE,
@@ -269,7 +279,8 @@ document.getElementById("bricks0").onload = () => {
         0
     ];
 }
-document.getElementById("bricks1").onload = () => {
+document.getElementById("bricks1").onload = function () {
+    console.info("dirt loaded.");
     BlueJumpGame.bricks1 = [
         document.getElementById("bricks1"),
         BlueJumpGame.BARRIER_SCALE,

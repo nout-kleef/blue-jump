@@ -44,10 +44,10 @@ function draw() {
     for (let fb = 0; fb < bj.fakeBarriers.length; fb++) {
         if (bj.fakeBarriers[fb].p.y < highestFake.p.y)
             highestFake = bj.fakeBarriers[fb]; // TODO: is this right?
-        fakeBarriers[fb].show();
+        bj.fakeBarriers[fb].show();
     }
     if (bj.fakeBarriers.length < BlueJumpGame.MAX_BARRIERS)
-        pickNewHighest(
+        bj.pickNewHighest(
             highestFake.p,
             true,
             bj.fakeBarriers.length < BlueJumpGame.MAX_BARRIERS - 2
@@ -56,11 +56,12 @@ function draw() {
     let highest = bj.barriers[0];
     for (let b = 0; b < bj.barriers.length; b++) {
         if (bj.barriers[b].p.y < highest.p.y)
+
             highest = bj.barriers[b]; // TODO: is this right?
-        barriers[b].show();
+        bj.barriers[b].show();
     }
     if (highest.p.y > -100 && BlueJumpGame.LEVELCREATION)
-        pickNewHighest(highest.p, false);
+        bj.pickNewHighest(highest.p, false);
     // extra information
     if (BlueJumpGame.DEBUG) {
         textAlign(RIGHT);
