@@ -229,8 +229,8 @@ function draw() {
     textFont('arial');
     textSize(0.3 * BlueJumpGame.TEXT_SIZE);
     noStroke();
-    text('\u00A9', width - 0.3 * BARRIER_SCALE - 2 * BlueJumpGame.TEXT_SIZE, height / 2);
-    textFont(myFont);
+    text('\u00A9', width - 0.3 * BlueJumpGame.BARRIER_SCALE - 2 * BlueJumpGame.TEXT_SIZE, height / 2);
+    textFont(BlueJumpGame.FONT);
     textSize(0.2 * BlueJumpGame.TEXT_SIZE);
-    text('| 2016 | Nout Kleef', width - 0.3 * BARRIER_SCALE, height / 2);
+    text('| 2016 | Nout Kleef', width - 0.3 * BlueJumpGame.BARRIER_SCALE, height / 2);
 }

@@ -56,7 +56,6 @@ class BlueJumpGame {
             BlueJumpGame.lava[4]
         );
         // set up first barrier
-        console.log(BlueJumpGame.dirtblock);
         this.barriers.push( // TODO: refactor this too
             new Barrier(
                 this.player.p.x + 0.5 * this.player.activities[this.player.activity].width - 0.5 * BlueJumpGame.BARRIER_SCALE,

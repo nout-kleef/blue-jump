@@ -8,9 +8,9 @@ class Floor {
 
     show(origWidth, origHeight) {
         for (let i = 0; i < this.repeats; i++)
-            this.image.show(
-                i * this.image.width,
-                (BlueJumpGame.IS_SAFARI ? windowHeight : window.screen.height) - this.image.height,
+            this.sprite.show(
+                i * this.sprite.displayWidth,
+                (BlueJumpGame.IS_SAFARI ? windowHeight : window.screen.height) - this.sprite.displayHeight,
                 origWidth,
                 origHeight
             );
