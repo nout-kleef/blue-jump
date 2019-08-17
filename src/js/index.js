@@ -31,8 +31,6 @@ function setup() {
     BlueJumpGame.blueGuy03[0].loadPixels();
     BlueJumpGame.blueGuy04[0].loadPixels();
     BlueJumpGame.lava[0].loadPixels();
-    // initialise game instance
-    bj = new BlueJumpGame();
     // change behaviour depending on browser
     if (BlueJumpGame.IS_SAFARI) {
         createCanvas(window.screen.width, windowHeight);
@@ -41,6 +39,8 @@ function setup() {
     }
     BlueJumpGame.field =
         document.getElementById("defaultCanvas0").getContext("2d");
+    // initialise game instance
+    bj = new BlueJumpGame();
     colorMode(RGB);
     bj.colours = [
         color(64, 112, 184),

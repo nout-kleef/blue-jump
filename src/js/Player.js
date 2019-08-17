@@ -94,10 +94,10 @@ class Player {
                 if (bj.barriers[b].p.y >= height - 40)
                     bj.barriers.splice(b, 1);
             }
-            for (let fb = 0; fb < fakeBarriers.length; fb++) {
-                fakeBarriers[fb].p.y += exceedance / fakeBarriers[fb].p.z;
-                if (fakeBarriers[fb].p.y >= height - 50)
-                    fakeBarriers.splice(fb, 1);
+            for (let fb = 0; fb < bj.fakeBarriers.length; fb++) {
+                bj.fakeBarriers[fb].p.y += exceedance / bj.fakeBarriers[fb].p.z;
+                if (bj.fakeBarriers[fb].p.y >= height - 50)
+                    bj.fakeBarriers.splice(fb, 1);
             }
         }
         this.a.y = BlueJumpGame.GRAVITY;

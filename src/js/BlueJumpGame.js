@@ -31,6 +31,7 @@ class BlueJumpGame {
             BlueJumpGame.JUMP_POWER = 30;
         }
         // initialise player
+        console.log(width, height);
         this.player = new Player( // TODO: refactor this. drastically.
             width / 2 - BlueJumpGame.BARRIER_SCALE / 3,
             height * 3 / 4,
