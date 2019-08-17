@@ -18,8 +18,6 @@ function preload() {
 }
 
 function setup() {
-    // initialise game instance
-    bj = new BlueJumpGame();
     // finish up loading the assets
     // images
     BlueJumpGame.dirtblock[0].loadPixels();
@@ -33,6 +31,8 @@ function setup() {
     BlueJumpGame.blueGuy03[0].loadPixels();
     BlueJumpGame.blueGuy04[0].loadPixels();
     BlueJumpGame.lava[0].loadPixels();
+    // initialise game instance
+    bj = new BlueJumpGame();
     // change behaviour depending on browser
     if (BlueJumpGame.IS_SAFARI) {
         createCanvas(window.screen.width, windowHeight);
