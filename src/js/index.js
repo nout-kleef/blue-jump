@@ -121,7 +121,7 @@ function draw() {
         if (bj.textAnimations[i].shouldBeDeleted()) {
             bj.textAnimations[i].update();
             bj.textAnimations[i].show();
-        } else bj.textAnimations[i].splice(i, 1);
+        } else bj.textAnimations.splice(i, 1);
     }
     // show stuff depending on current gameMode TODO: refactor this
     switch (bj.gameMode) {
