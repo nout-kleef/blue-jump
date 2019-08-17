@@ -31,6 +31,7 @@ class BlueJumpGame {
             BlueJumpGame.JUMP_POWER = 30;
         }
         // initialise player
+        console.log(width, height);
         this.player = new Player( // TODO: refactor this. drastically.
             width / 2 - BlueJumpGame.BARRIER_SCALE / 3,
             height * 3 / 4,
@@ -58,8 +59,8 @@ class BlueJumpGame {
         // set up first barrier
         this.barriers.push( // TODO: refactor this too
             new Barrier(
-                this.player.p.x + 0.5 * this.player.activities[this.player.activity].width - 0.5 * BlueJumpGame.BARRIER_SCALE,
-                this.player.p.y + this.player.activities[this.player.activity].height,
+                this.player.p.x + 0.5 * this.player.activities[this.player.activity].displayWidth - 0.5 * BlueJumpGame.BARRIER_SCALE,
+                this.player.p.y + this.player.activities[this.player.activity].displayHeight,
                 1,
                 0,
                 0,
@@ -80,10 +81,10 @@ class BlueJumpGame {
         );
         // finalise
         this.pickNewHighest(0, true);
-        this.gameMode(-1);
+        this.setMode(-1);
     }
 
-    gameMode(mode) {
+    setMode(mode) {
         switch (mode) {
             case -1:
                 this.gameMode = -1;
@@ -110,10 +111,10 @@ class BlueJumpGame {
             );
         }
         if (this.gameMode !== 1) {
-            setTimeout(() => {
+            setTimeout(function () {
                 this.fullScreenActive = true;
-                this.gameMode(0);
-            }, 60);
+                this.setMode(0);
+            }.bind(this), 600);
         }
     }
 
@@ -132,13 +133,11 @@ class BlueJumpGame {
             }
         }
         if (!pickRandom) {
-            const difficulty = Math.floor(this.player.stats.score / 2500) * 0.02 * BlueJumpGame.BARRIER_SCALE;
-            difficulty = constrain(difficulty, 0, 0.5 * BlueJumpGame.BARRIER_SCALE);
+            const difficulty = constrain(Math.floor(this.player.stats.score / 2500) * 0.02 * BlueJumpGame.BARRIER_SCALE, 0, 0.5 * BlueJumpGame.BARRIER_SCALE);
             const constr = BlueJumpGame.MOBILE_CONTROLS ? 0.5 : 0.80;
             const dir = Math.random() < 0.5 ? 1 : -1;
             const maxY = 0.5 * (BlueJumpGame.JUMP_POWER * BlueJumpGame.JUMP_POWER + BlueJumpGame.JUMP_POWER) / BlueJumpGame.GRAVITY;
-            const maxX = 1.7 * BlueJumpGame.JUMP_POWER * BlueJumpGame.HORIZONTAL_SPEED * constr * 1.2 + difficulty;
-            maxX = constrain(maxX, 0, width);
+            const maxX = constrain(1.7 * BlueJumpGame.JUMP_POWER * BlueJumpGame.HORIZONTAL_SPEED * constr * 1.2 + difficulty, 0, width);
             const increaseY = (0.3 + 0.7 * Math.random()) * maxY;
             const newX = constrain(oldPos.x + dir * (0.3 + 0.7 * Math.random()) * maxX, BlueJumpGame.MOVEMENT, width - BlueJumpGame.BARRIER_SCALE - BlueJumpGame.MOVEMENT);
             this.barriers.push(new Barrier(newX, oldPos.y - increaseY, 1, -3 + 6 * Math.random() * constr, 0, 0, BlueJumpGame.BARRIER_SCALE, 0.25 * BlueJumpGame.BARRIER_SCALE, new Sprite(txtr[0], txtr[1], txtr[2], txtr[3], txtr[4], txtr[5], txtr[6]), 150, h));

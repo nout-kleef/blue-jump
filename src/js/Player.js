@@ -62,7 +62,7 @@ class Player {
     }
 
     update() {
-        if ((BlueJumpGame.AUTOJUMP || keyDown(32)) && !this.falling) {
+        if ((BlueJumpGame.AUTOJUMP || keyIsDown(32)) && !this.falling) {
             this.jump();
         }
         if (this.stats.alive) {
@@ -73,16 +73,16 @@ class Player {
             this.v.x = BlueJumpGame.HORIZONTAL_SPEED * orientedMovement;
         } else { // keyboard controls
             if (
-                (keyDown(37) || keyDown('a')) !== (keyDown(39) || keyDown('d'))
+                (keyIsDown(37) || keyIsDown(65)) !== (keyIsDown(39) || keyIsDown(68))
             ) {
                 if (this.stats.alive) this.walk();
-                if (keyDown(37) || keyDown('a'))
+                if (keyIsDown(37) || keyIsDown(65))
                     this.v.x = -BlueJumpGame.HORIZONTAL_SPEED;
                 else this.v.x = BlueJumpGame.HORIZONTAL_SPEED;
             }
         }
-        this.p.x = constrain(this.p.x + this.v.x, 0, width - this.activities[this.activity].width);
-        this.p.y = constrain(this.p.y + this.v.y, 0, height - this.activities[this.activity].height);
+        this.p.x = constrain(this.p.x + this.v.x, 0, width - this.activities[this.activity].displayWidth);
+        this.p.y = constrain(this.p.y + this.v.y, 0, height - this.activities[this.activity].displayHeight);
         this.v.x += this.a.x;
         this.v.y += this.a.y;
         if (this.p.y < height / 3) {
@@ -94,32 +94,32 @@ class Player {
                 if (bj.barriers[b].p.y >= height - 40)
                     bj.barriers.splice(b, 1);
             }
-            for (let fb = 0; fb < fakeBarriers.length; fb++) {
-                fakeBarriers[fb].p.y += exceedance / fakeBarriers[fb].p.z;
-                if (fakeBarriers[fb].p.y >= height - 50)
-                    fakeBarriers.splice(fb, 1);
+            for (let fb = 0; fb < bj.fakeBarriers.length; fb++) {
+                bj.fakeBarriers[fb].p.y += exceedance / bj.fakeBarriers[fb].p.z;
+                if (bj.fakeBarriers[fb].p.y >= height - 50)
+                    bj.fakeBarriers.splice(fb, 1);
             }
         }
         this.a.y = BlueJumpGame.GRAVITY;
-        if (this.p.y + this.activities[this.activity].height >= height) {
+        if (this.p.y + this.activities[this.activity].displayHeight >= height) {
             if (this.stats.alive) {
                 this.land();
                 this.die();
             } else this.bury();
         }
-        for (let b = 0; b < barriers.length; b++) {
-            if (this.collide(barriers[b])) {
+        for (let b = 0; b < bj.barriers.length; b++) {
+            if (this.collide(bj.barriers[b])) {
                 if (
-                    this.p.y + this.activities[this.activity].height >= barriers[b].p.y &&
-                    this.p.y + this.activities[this.activity].height - barriers[b].p.y <= LANDING_THRESHOLD &&
+                    this.p.y + this.activities[this.activity].displayHeight >= bj.barriers[b].p.y &&
+                    this.p.y + this.activities[this.activity].displayHeight - bj.barriers[b].p.y <= BlueJumpGame.LANDING_THRESHOLD &&
                     this.v.y > 0
                 ) {
                     this.land(
-                        barriers[b].p.y - this.activities[this.activity].height,
-                        barriers[b].v.x
+                        bj.barriers[b].p.y - this.activities[this.activity].displayHeight,
+                        bj.barriers[b].v.x
                     );
-                    if (!barriers[b].jumped) this.stats.barriersJumped++;
-                    barriers[b].jumped = true;
+                    if (!bj.barriers[b].jumped) this.stats.barriersJumped++;
+                    bj.barriers[b].jumped = true;
                 }
             }
         }
@@ -141,9 +141,9 @@ class Player {
     }
 
     collide(target) {
-        return this.p.x + this.activities[this.activity].width - this.activities[this.activity].padding.right >= target.p.x &&
+        return this.p.x + this.activities[this.activity].displayWidth - this.activities[this.activity].padding.right >= target.p.x &&
             this.p.x + this.activities[this.activity].padding.left <= target.p.x + target.width &&
-            this.p.y + this.activities[this.activity].height >= target.p.y &&
+            this.p.y + this.activities[this.activity].displayHeight >= target.p.y &&
             this.p.y <= target.p.y + target.height;
     }
 
@@ -151,25 +151,25 @@ class Player {
         this.shouldUpdate = false;
         this.activity = 3;
         this.p.y = (BlueJumpGame.IS_SAFARI ? windowHeight : window.screen.height) - 3 * BlueJumpGame.BARRIER_SCALE / 3;
-        textAnimations.push(
-            new TextAnimation(3, width * 0.8, 2 * BlueJumpGame.TEXT_SIZE, frameRate() / 3, 2 * frameRate() / 3, [0, 0, 0], frameCount)
+        bj.textAnimations.push(
+            new Text(3, width * 0.8, 2 * BlueJumpGame.TEXT_SIZE, frameRate() / 3, 2 * frameRate() / 3, [0, 0, 0], frameCount)
         );
         setTimeout(() => {
-            textAnimations.push(
-                new TextAnimation(2, width * 0.8, 2 * BlueJumpGame.TEXT_SIZE, frameRate() / 3, 2 * frameRate() / 3, [0, 0, 0], frameCount)
+            bj.textAnimations.push(
+                new Text(2, width * 0.8, 2 * BlueJumpGame.TEXT_SIZE, frameRate() / 3, 2 * frameRate() / 3, [0, 0, 0], frameCount)
             );
         }, 1000);
         setTimeout(() => {
-            textAnimations.push(
-                new TextAnimation(1, width * 0.8, 2 * BlueJumpGame.TEXT_SIZE, frameRate() / 3, 2 * frameRate() / 3, [0, 0, 0], frameCount)
+            bj.textAnimations.push(
+                new Text(1, width * 0.8, 2 * BlueJumpGame.TEXT_SIZE, frameRate() / 3, 2 * frameRate() / 3, [0, 0, 0], frameCount)
             );
         }, 2000);
         setTimeout(() => {
             this.stats.alive = false;
             this.activity = 2;
-            this.jump(2.2 * JUMP_POWER);
+            this.jump(2.2 * BlueJumpGame.JUMP_POWER);
             this.shouldUpdate = true;
-            textAnimations.push(new TextAnimation("SECOND CHANCE!", width * 0.8, 1.5 * BlueJumpGame.TEXT_SIZE, frameRate() / 3, 2 * frameRate(), [0, 0, 0], frameCount));
+            bj.textAnimations.push(new Text("SECOND CHANCE!", width * 0.8, 1.5 * BlueJumpGame.TEXT_SIZE, frameRate() / 3, 2 * frameRate(), [0, 0, 0], frameCount));
         }, 3200);
     }
 
@@ -191,10 +191,10 @@ class Player {
                     this.p.y--;
                     if (this.p.y <= (BlueJumpGame.IS_SAFARI ? windowHeight : window.screen.height) - 2.7 * BlueJumpGame.BARRIER_SCALE / 3) {
                         clearInterval(this.burying);
-                        textAnimations.push(
-                            new TextAnimation("GAME OVER!", width * 0.8, 1.5 * txtSize, frameRate() / 3, Infinity, [0, 0, 0], frameCount, width / 2, 100)
+                        bj.textAnimations.push(
+                            new Text("GAME OVER!", width * 0.8, 1.5 * txtSize, frameRate() / 3, Infinity, [0, 0, 0], frameCount, width / 2, 100)
                         );
-                        gameMode(1);
+                        this.setMode(1);
                         this.buried = true;
                     }
                 }, 1000 / frameRate());

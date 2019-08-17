@@ -18,8 +18,6 @@ function preload() {
 }
 
 function setup() {
-    // initialise game instance
-    bj = new BlueJumpGame();
     // finish up loading the assets
     // images
     BlueJumpGame.dirtblock[0].loadPixels();
@@ -41,6 +39,8 @@ function setup() {
     }
     BlueJumpGame.field =
         document.getElementById("defaultCanvas0").getContext("2d");
+    // initialise game instance
+    bj = new BlueJumpGame();
     colorMode(RGB);
     bj.colours = [
         color(64, 112, 184),
@@ -121,7 +121,7 @@ function draw() {
         if (bj.textAnimations[i].shouldBeDeleted()) {
             bj.textAnimations[i].update();
             bj.textAnimations[i].show();
-        } else bj.textAnimations[i].splice(i, 1);
+        } else bj.textAnimations.splice(i, 1);
     }
     // show stuff depending on current gameMode TODO: refactor this
     switch (bj.gameMode) {
@@ -130,11 +130,11 @@ function draw() {
                 !BlueJumpGame.prefix(document, "FullScreen") &&
                 !BlueJumpGame.prefix(document, "IsFullScreen")) {
                 // not in fullscreen mode
-                gameMode(-1);
+                bj.setMode(-1);
                 bj.fullScreenActive = false;
             }
-            for (let i = 0; i < barriers.length; i++) {
-                barriers[i].update();
+            for (let i = 0; i < bj.barriers.length; i++) {
+                bj.barriers[i].update();
             }
             if (bj.player.shouldUpdate && bj.fullScreenActive) {
                 bj.player.update();
