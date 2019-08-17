@@ -107,19 +107,19 @@ class Player {
                 this.die();
             } else this.bury();
         }
-        for (let b = 0; b < barriers.length; b++) {
-            if (this.collide(barriers[b])) {
+        for (let b = 0; b < bj.barriers.length; b++) {
+            if (this.collide(bj.barriers[b])) {
                 if (
-                    this.p.y + this.activities[this.activity].height >= barriers[b].p.y &&
-                    this.p.y + this.activities[this.activity].height - barriers[b].p.y <= LANDING_THRESHOLD &&
+                    this.p.y + this.activities[this.activity].height >= bj.barriers[b].p.y &&
+                    this.p.y + this.activities[this.activity].height - bj.barriers[b].p.y <= LANDING_THRESHOLD &&
                     this.v.y > 0
                 ) {
                     this.land(
-                        barriers[b].p.y - this.activities[this.activity].height,
-                        barriers[b].v.x
+                        bj.barriers[b].p.y - this.activities[this.activity].height,
+                        bj.barriers[b].v.x
                     );
-                    if (!barriers[b].jumped) this.stats.barriersJumped++;
-                    barriers[b].jumped = true;
+                    if (!bj.barriers[b].jumped) this.stats.barriersJumped++;
+                    bj.barriers[b].jumped = true;
                 }
             }
         }
