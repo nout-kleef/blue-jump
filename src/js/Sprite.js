@@ -21,7 +21,7 @@ class Sprite {
     }
 
     show(x, y, origWidth, origHeight) {
-        const frameIndex =
+        let frameIndex =
             Math.floor(this.count / this.fpsScale) % this.framesCount;
         const srcWidth = typeof origWidth === 'undefined' ? this.displayWidth : origWidth;
         const srcHeight = typeof origHeight === 'undefined' ? this.displayHeight : origHeight;
@@ -31,12 +31,12 @@ class Sprite {
             frameIndex = 0;
             this.count++;
         }
-        BlueJumpGame.field.drawImage(
+        image(
             this.img,
-            frameIndex * srcWidth, 0,
-            srcWidth, srcHeight,
             x, y,
-            this.displayWidth, this.displayHeight
+            this.displayWidth, this.displayHeight,
+            frameIndex * srcWidth, 0,
+            srcWidth, srcHeight
         );
     }
 }
