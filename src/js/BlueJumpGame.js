@@ -80,10 +80,10 @@ class BlueJumpGame {
         );
         // finalise
         this.pickNewHighest(0, true);
-        this.gameMode(-1);
+        this.setMode(-1);
     }
 
-    gameMode(mode) {
+    setMode(mode) {
         switch (mode) {
             case -1:
                 this.gameMode = -1;
@@ -110,10 +110,11 @@ class BlueJumpGame {
             );
         }
         if (this.gameMode !== 1) {
-            setTimeout(() => {
+            setTimeout(function () {
+                console.log(this);
                 this.fullScreenActive = true;
-                this.gameMode(0);
-            }, 60);
+                this.setMode(0);
+            }.bind(this), 500);
         }
     }
 

@@ -130,11 +130,11 @@ function draw() {
                 !BlueJumpGame.prefix(document, "FullScreen") &&
                 !BlueJumpGame.prefix(document, "IsFullScreen")) {
                 // not in fullscreen mode
-                gameMode(-1);
+                bj.setMode(-1);
                 bj.fullScreenActive = false;
             }
-            for (let i = 0; i < barriers.length; i++) {
-                barriers[i].update();
+            for (let i = 0; i < bj.barriers.length; i++) {
+                bj.barriers[i].update();
             }
             if (bj.player.shouldUpdate && bj.fullScreenActive) {
                 bj.player.update();

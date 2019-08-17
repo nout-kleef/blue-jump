@@ -62,7 +62,7 @@ class Player {
     }
 
     update() {
-        if ((BlueJumpGame.AUTOJUMP || keyDown(32)) && !this.falling) {
+        if ((BlueJumpGame.AUTOJUMP || keyIsDown(32)) && !this.falling) {
             this.jump();
         }
         if (this.stats.alive) {
@@ -73,10 +73,10 @@ class Player {
             this.v.x = BlueJumpGame.HORIZONTAL_SPEED * orientedMovement;
         } else { // keyboard controls
             if (
-                (keyDown(37) || keyDown('a')) !== (keyDown(39) || keyDown('d'))
+                (keyIsDown(37) || keyIsDown(65)) !== (keyIsDown(39) || keyIsDown(68))
             ) {
                 if (this.stats.alive) this.walk();
-                if (keyDown(37) || keyDown('a'))
+                if (keyIsDown(37) || keyIsDown(65))
                     this.v.x = -BlueJumpGame.HORIZONTAL_SPEED;
                 else this.v.x = BlueJumpGame.HORIZONTAL_SPEED;
             }
@@ -194,7 +194,7 @@ class Player {
                         textAnimations.push(
                             new TextAnimation("GAME OVER!", width * 0.8, 1.5 * txtSize, frameRate() / 3, Infinity, [0, 0, 0], frameCount, width / 2, 100)
                         );
-                        gameMode(1);
+                        this.setMode(1);
                         this.buried = true;
                     }
                 }, 1000 / frameRate());
