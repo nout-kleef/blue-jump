@@ -81,8 +81,8 @@ class Player {
                 else this.v.x = BlueJumpGame.HORIZONTAL_SPEED;
             }
         }
-        this.p.x = constrain(this.p.x + this.v.x, 0, width - this.activities[this.activity].width);
-        this.p.y = constrain(this.p.y + this.v.y, 0, height - this.activities[this.activity].height);
+        this.p.x = constrain(this.p.x + this.v.x, 0, width - this.activities[this.activity].displayWidth);
+        this.p.y = constrain(this.p.y + this.v.y, 0, height - this.activities[this.activity].displayHeight);
         this.v.x += this.a.x;
         this.v.y += this.a.y;
         if (this.p.y < height / 3) {
