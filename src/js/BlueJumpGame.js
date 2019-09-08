@@ -12,7 +12,72 @@ class BlueJumpGame {
         this.highest = 0;
         this.fullScreenActive = false;
         this.returned = false;
-        // initialise controls
+
+        this._initControls();
+        this._initGame();
+        this._initBarriers();
+        // finalise
+        this._pickNewHighest(0, true);
+        this._setGameMode(-1);
+        // finish loading assets
+        this._loadAssetPixels();
+        // set up colour pallette
+        colorMode(RGB);
+        this.colours = [
+            color(64, 112, 184),
+            color(191, 218, 235),
+            color(90, 0, 0),
+            color(200, 0, 0)
+        ];
+    }
+
+    loop(debug) {
+        this._showBackground();
+        // barriers
+        const highest = this._showBarriers(true);
+        if (highest.p.y > -100 && BlueJumpGame.LEVELCREATION)
+            this._pickNewHighest(highest.p, false);
+        // character
+        this.player.activities[this.player.activity].show(
+            this.player.p.x, this.player.p.y,
+            100, 100
+        );
+        // floor
+        this._showFloor(this.player.stats.alive);
+        // text animations
+        for (let i = 0; i < this.textAnimations.length; i++) {
+            if (this.textAnimations[i].shouldBeDeleted()) {
+                this.textAnimations[i].update();
+                this.textAnimations[i].show();
+            } else this.textAnimations[i].splice(i, 1);
+        }
+        // handle gameMode-specific stuff
+        this._handleGameMode(this.gameMode);
+        // show score
+        this._showScore(this.player.stats.score);
+        // show credits
+        this._showCredits();
+        // debugging
+        if (debug) {
+            textAlign(RIGHT);
+            textSize(18);
+            stroke(0);
+            fill(255, 255, 0);
+            text("score: " + this.player.getScore(), width - 60, 60);
+            text("barriers jumped: " + this.player.stats.barriersJumped, width - 60, 90);
+            text("Pixels traversed vertically: " + this.player.getTraversedPixels(), width - 60, 120);
+            text("FPS: " + Math.round(frameRate()), width - 60, 150);
+            text("mobile controls: " + BlueJumpGame.MOBILE_CONTROLS, width - 60, 210);
+            text("rotation: " + this.rotation.toFixed(3), width - 60, 240);
+            text("orientedMovement: " + this.orientedMovement.toFixed(3), width - 60, 270);
+            text("# of fake barriers: " + this.fakeBarriers.length, width - 60, 300);
+            text("width: " + window.screen.width, width - 60, 330);
+            text("height: " + (BlueJumpGame.IS_SAFARI ? windowHeight : window.screen.height), width - 60, 360);
+            text("mouseX, mouseY: " + Math.round(mouseX) + ", " + Math.round(mouseY), width - 60, 390);
+        }
+    }
+
+    _initControls() {
         if (BlueJumpGame.MOBILE_CONTROLS) {
             window.addEventListener(
                 'deviceorientation',
@@ -30,6 +95,9 @@ class BlueJumpGame {
             BlueJumpGame.TIP = 'TIP: press \'esc\' to pause the game';
             BlueJumpGame.JUMP_POWER = 30;
         }
+    }
+
+    _initGame() {
         // initialise player
         this.player = new Player( // TODO: refactor this. drastically.
             width / 2 - BlueJumpGame.BARRIER_SCALE / 3,
@@ -55,7 +123,9 @@ class BlueJumpGame {
             BlueJumpGame.lava[3],
             BlueJumpGame.lava[4]
         );
-        // set up first barrier
+    }
+
+    _initBarriers() {
         this.barriers.push( // TODO: refactor this too
             new Barrier(
                 this.player.p.x + 0.5 * this.player.activities[this.player.activity].width - 0.5 * BlueJumpGame.BARRIER_SCALE,
@@ -78,12 +148,86 @@ class BlueJumpGame {
                 46
             )
         );
-        // finalise
-        this.pickNewHighest(0, true);
-        this.gameMode(-1);
     }
 
-    gameMode(mode) {
+    _showBackground() {
+        noStroke();
+        for (let bg = 0; bg < 1; bg += 1 / BlueJumpGame.BACKGROUND_SHADES) {
+            const origin = this.player.stats.alive ? 0 : 2; // 01:alive, 23:dead
+            const shade = lerpColor(
+                this.colours[origin], this.colours[origin + 1], bg
+            );
+            fill(shade);
+            rect(0, height * bg, width, height * (bg + 1));
+        }
+    }
+
+    _showBarriers(showFakes) {
+        if (showFakes) {
+            let highestFake = this.fakeBarriers[0];
+            for (let fb = 0; fb < this.fakeBarriers.length; fb++) {
+                if (this.fakeBarriers[fb].p.y < highestFake.p.y)
+                    highestFake = this.fakeBarriers[fb]; // TODO: is this right?
+                this.fakeBarriers[fb].show();
+            }
+            if (this.fakeBarriers.length < BlueJumpGame.MAX_BARRIERS)
+                this._pickNewHighest(
+                    highestFake.p,
+                    true,
+                    this.fakeBarriers.length < BlueJumpGame.MAX_BARRIERS - 2
+                );
+        }
+        // draw the real barriers & find the highest
+        let highest = this.barriers[0];
+        for (let b = 0; b < this.barriers.length; b++) {
+            if (this.barriers[b].p.y < highest.p.y)
+                highest = this.barriers[b]; // TODO: is this right?
+            this.barriers[b].show();
+        }
+        return highest;
+    }
+
+    _showFloor(alive) {
+        if (alive) BlueJumpGame.spikesFloor.show(150, 46);
+        else BlueJumpGame.lavaFloor.show(150, 50);
+    }
+
+    _showScore(score) {
+        fill(0);
+        strokeWeight(3);
+        stroke(255);
+        textAlign(CENTER);
+        textSize(0.9 * BlueJumpGame.TEXT_SIZE);
+        text(score, width / 2, 0.8 * BlueJumpGame.TEXT_SIZE);
+    }
+
+    _showCredits() {
+        textAlign(RIGHT);
+        textFont('arial');
+        textSize(0.3 * BlueJumpGame.TEXT_SIZE);
+        noStroke();
+        text('\u00A9', width - 0.3 * BlueJumpGame.BARRIER_SCALE - 2 * BlueJumpGame.TEXT_SIZE, height / 2);
+        textFont(BlueJumpGame.FONT);
+        textSize(0.2 * BlueJumpGame.TEXT_SIZE);
+        text('| 2016 | Nout Kleef', width - 0.3 * BlueJumpGame.BARRIER_SCALE, height / 2);
+    }
+
+    _loadAssetPixels() {
+        // images
+        BlueJumpGame.dirtblock[0].loadPixels();
+        BlueJumpGame.spikes[0].loadPixels();
+        BlueJumpGame.brickblock0[0].loadPixels();
+        BlueJumpGame.brickblock1[0].loadPixels();
+        BlueJumpGame.transition[0].loadPixels();
+        BlueJumpGame.grave[0].loadPixels();
+        // sprites
+        BlueJumpGame.blueGuy02[0].loadPixels();
+        BlueJumpGame.blueGuy03[0].loadPixels();
+        BlueJumpGame.blueGuy04[0].loadPixels();
+        BlueJumpGame.lava[0].loadPixels();
+    }
+
+    _setGameMode(mode) {
         switch (mode) {
             case -1:
                 this.gameMode = -1;
@@ -99,11 +243,112 @@ class BlueJumpGame {
         }
     }
 
+    _handleGameMode(mode) {
+        switch (mode) {
+            case 0:
+                if (!(BlueJumpGame.IS_SAFARI || // TODO: split off
+                        BlueJumpGame.prefix(document, "FullScreen") ||
+                        BlueJumpGame.prefix(document, "IsFullScreen"))) {
+                    // not in fullscreen mode
+                    this._setGameMode(-1);
+                    this.fullScreenActive = false;
+                }
+                for (let i = 0; i < this.barriers.length; i++) {
+                    this.barriers[i].update();
+                }
+                if (this.player.shouldUpdate && this.fullScreenActive) {
+                    this.player.update();
+                }
+                break;
+            case -1:
+                noStroke();
+                fill('rgba(0,0,0,0.8)'); // TODO: is there an actual function for this?
+                rect(0, 0, window.screen.width, (BlueJumpGame.IS_SAFARI ? windowHeight : window.screen.height));
+                fill(200, 200, 0);
+                strokeWeight(BlueJumpGame.ARROW_SCALE * 0.125);
+                stroke(255);
+                // draw an arrow pointing to "play" button
+                this._showInstructions();
+                break;
+            case 1:
+                // TODO: cleanup
+                console.warn("deprecated gameMode detected");
+                break;
+                noStroke();
+                fill("rgba(0, 0, 0, 0.4)"); // TODO: is there an actual function for this?
+                rect(0, 0, window.screen.width, (BlueJumpGame.IS_SAFARI ? windowHeight : window.screen.height));
+                const xoff = width / 2 - 4.87 * BlueJumpGame.TEXT_SIZE;
+                if (!this.returned) {
+                    textSize(BlueJumpGame.TEXT_SIZE);
+                    textAlign(CENTER);
+                    if (floor(frameCount / 2) % 4 === 0) {
+                        text('loading', width / 2, height / 2);
+                    } else if (floor(frameCount / 2) % 4 === 1) {
+                        text('loading.', width / 2, height / 2);
+                    } else if (floor(frameCount / 2) % 4 === 2) {
+                        text('loading..', width / 2, height / 2);
+                    } else {
+                        text('loading...', width / 2, height / 2);
+                    }
+                } else {
+                    fill(255, 128, 0);
+                    textSize(BlueJumpGame.TEXT_SIZE);
+                    textAlign(CENTER);
+                    textSize(0.5 * BlueJumpGame.TEXT_SIZE);
+                    textAlign(LEFT);
+                    text('#', xoff, 1.7 * BlueJumpGame.TEXT_SIZE + 115);
+                    text('Player', xoff + 1.2 * BlueJumpGame.TEXT_SIZE, 1.7 * BlueJumpGame.TEXT_SIZE + 115);
+                    text('Score', xoff + 8 * BlueJumpGame.TEXT_SIZE, 1.7 * BlueJumpGame.TEXT_SIZE + 115);
+                    fill(255, 255, 255);
+                    // showRanks(xoff);
+                }
+        }
+    }
+
+    _showInstructions() {
+        push();
+        translate(100, 30);
+        beginShape();
+        vertex(0, 0);
+        vertex(
+            BlueJumpGame.ARROW_SCALE * 1.05,
+            0.27 * BlueJumpGame.ARROW_SCALE
+        );
+        vertex(
+            0.62 * BlueJumpGame.ARROW_SCALE,
+            0.55 * BlueJumpGame.ARROW_SCALE
+        );
+        vertex(
+            1.65 * BlueJumpGame.ARROW_SCALE,
+            2.085 * BlueJumpGame.ARROW_SCALE
+        );
+        vertex(
+            1.18 * BlueJumpGame.ARROW_SCALE,
+            2.41 * BlueJumpGame.ARROW_SCALE
+        );
+        vertex(
+            0.18 * BlueJumpGame.ARROW_SCALE,
+            0.79 * BlueJumpGame.ARROW_SCALE
+        );
+        vertex(
+            -0.25 * BlueJumpGame.ARROW_SCALE,
+            BlueJumpGame.ARROW_SCALE
+        );
+        endShape(CLOSE);
+        pop();
+        textAlign(LEFT);
+        textSize(BlueJumpGame.TEXT_SIZE);
+        fill(0);
+        text("PLAY", 100, 30 + 3 * BlueJumpGame.ARROW_SCALE);
+        strokeWeight(BlueJumpGame.ARROW_SCALE * 0.0675);
+        textSize(0.5 * BlueJumpGame.TEXT_SIZE);
+        text(BlueJumpGame.CONTROLS_MSG, 40, 4 * BlueJumpGame.ARROW_SCALE);
+        text(BlueJumpGame.TIP, 40, 4.7 * BlueJumpGame.ARROW_SCALE);
+    }
+
     play() {
-        if (
-            !BlueJumpGame.prefix(document, 'FullScreen') &&
-            !BlueJumpGame.prefix(document, 'IsFullScreen')
-        ) {
+        if (!BlueJumpGame.prefix(document, 'FullScreen') &&
+            !BlueJumpGame.prefix(document, 'IsFullScreen')) {
             BlueJumpGame.prefix(
                 document.getElementById('defaultCanvas0'),
                 'RequestFullScreen'
@@ -117,7 +362,7 @@ class BlueJumpGame {
         }
     }
 
-    pickNewHighest(oldPos, pickRandom, inSight) { // TODO: refactor
+    _pickNewHighest(oldPos, pickRandom, inSight) { // TODO: refactor
         let h, txtr;
         if (this.player.stats.alive) {
             txtr = BlueJumpGame.dirtblock;
@@ -165,9 +410,9 @@ class BlueJumpGame {
             }
             m = BlueJumpGame.pfx[p] + m;
             t = typeof obj[m];
-            if (t != "undefined") {
+            if (t !== "undefined") {
                 BlueJumpGame.pfx = [BlueJumpGame.pfx[p]];
-                return (t == "function" ? obj[m]() : obj[m]);
+                return (t === "function" ? obj[m]() : obj[m]);
             }
             p++;
         }
