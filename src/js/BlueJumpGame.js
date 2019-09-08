@@ -110,10 +110,10 @@ class BlueJumpGame {
             );
         }
         if (this.gameMode !== 1) {
-            setTimeout(() => {
+            setTimeout(function () {
                 this.fullScreenActive = true;
-                this.gameMode(0);
-            }, 60);
+                this._setGameMode(0);
+            }.bind(this), 1000);
         }
     }
 
