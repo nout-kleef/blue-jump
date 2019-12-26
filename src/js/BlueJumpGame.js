@@ -49,7 +49,7 @@ class BlueJumpGame {
             if (this.textAnimations[i].shouldBeDeleted()) {
                 this.textAnimations[i].update();
                 this.textAnimations[i].show();
-            } else this.textAnimations[i].splice(i, 1);
+            } else this.textAnimations.splice(i, 1);
         }
         // handle gameMode-specific stuff
         this._handleGameMode(this.gameMode);
