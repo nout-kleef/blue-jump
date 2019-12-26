@@ -61,6 +61,15 @@ class Player {
         return Math.round(s);
     }
 
+    showScore() {
+        fill(0);
+        strokeWeight(3);
+        stroke(255);
+        textAlign(CENTER);
+        textSize(0.9 * BlueJumpGame.TEXT_SIZE);
+        text(this.getScore(), width / 2, 0.8 * BlueJumpGame.TEXT_SIZE);
+    }
+
     update() {
         if ((BlueJumpGame.AUTOJUMP || keyIsDown(32)) && !this.falling) {
             this.jump();
@@ -179,8 +188,6 @@ class Player {
     }
 
     bury() {
-        // pushRank(this.stats.score);
-        // getRanks();
         this.shouldUpdate = false;
         this.burying = setInterval(() => {
             this.p.y += 2;
@@ -192,9 +199,18 @@ class Player {
                     if (this.p.y <= (BlueJumpGame.IS_SAFARI ? windowHeight : window.screen.height) - 2.7 * BlueJumpGame.BARRIER_SCALE / 3) {
                         clearInterval(this.burying);
                         bj.textAnimations.push(
-                            new Text("GAME OVER!", width * 0.8, 1.5 * txtSize, frameRate() / 3, Infinity, [0, 0, 0], frameCount, width / 2, 100)
+                            new Text(
+                                "GAME OVER!",
+                                width * 0.8,
+                                1.5 * BlueJumpGame.TEXT_SIZE,
+                                frameRate() / 3,
+                                Infinity,
+                                [0, 0, 0],
+                                frameCount,
+                                width / 2,
+                                100
+                            )
                         );
-                        this.setMode(1);
                         this.buried = true;
                     }
                 }, 1000 / frameRate());

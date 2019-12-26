@@ -18,9 +18,7 @@ class BlueJumpGame {
         this._initBarriers();
         // finalise
         this._pickNewHighest(0, true);
-        this._setGameMode(-1);
-        // finish loading assets
-        this._loadAssetPixels();
+        this.setMode(-1);
         // set up colour pallette
         colorMode(RGB);
         this.colours = [
@@ -43,7 +41,11 @@ class BlueJumpGame {
             100, 100
         );
         // floor
-        this._showFloor(this.player.stats.alive);
+        if(this.player.stats.alive) {
+            BlueJumpGame.spikesFloor.show(150, 46);
+        } else {
+            BlueJumpGame.lavaFloor.show(150, 50);
+        }
         // text animations
         for (let i = 0; i < this.textAnimations.length; i++) {
             if (this.textAnimations[i].shouldBeDeleted()) {
@@ -51,13 +53,9 @@ class BlueJumpGame {
                 this.textAnimations[i].show();
             } else this.textAnimations.splice(i, 1);
         }
-        // handle gameMode-specific stuff
         this._handleGameMode(this.gameMode);
-        // show score
-        this._showScore(this.player.stats.score);
-        // show credits
+        this.player.showScore();
         this._showCredits();
-        // debugging
         if (debug) {
             textAlign(RIGHT);
             textSize(18);
@@ -150,8 +148,45 @@ class BlueJumpGame {
             )
         );
         // finalise
-        this.pickNewHighest(0, true);
+        this._pickNewHighest(0, true);
         this.setMode(-1);
+    }
+
+    _showBackground() {
+        noStroke();
+        for (let bg = 0; bg < 1; bg += 1 / BlueJumpGame.BACKGROUND_SHADES) {
+            const origin = this.player.stats.alive ? 0 : 2; // 01:alive, 23:dead
+            const shade = lerpColor(
+                this.colours[origin], this.colours[origin + 1], bg
+            );
+            fill(shade);
+            rect(0, height * bg, width, height * (bg + 1));
+        }
+    }
+
+    _showBarriers(showFakes) {
+        if (showFakes) {
+            let highestFake = this.fakeBarriers[0];
+            for (let fb = 0; fb < this.fakeBarriers.length; fb++) {
+                if (this.fakeBarriers[fb].p.y < highestFake.p.y)
+                    highestFake = this.fakeBarriers[fb]; // TODO: is this right?
+                this.fakeBarriers[fb].show();
+            }
+            if (this.fakeBarriers.length < BlueJumpGame.MAX_BARRIERS)
+                this._pickNewHighest(
+                    highestFake.p,
+                    true,
+                    this.fakeBarriers.length < BlueJumpGame.MAX_BARRIERS - 2
+                );
+        }
+        // draw the real barriers & find the highest
+        let highest = this.barriers[0];
+        for (let b = 0; b < this.barriers.length; b++) {
+            if (this.barriers[b].p.y < highest.p.y)
+                highest = this.barriers[b]; // TODO: is this right?
+            this.barriers[b].show();
+        }
+        return highest;
     }
 
     setMode(mode) {
@@ -177,7 +212,7 @@ class BlueJumpGame {
                         BlueJumpGame.prefix(document, "FullScreen") ||
                         BlueJumpGame.prefix(document, "IsFullScreen"))) {
                     // not in fullscreen mode
-                    this._setGameMode(-1);
+                    this.setMode(-1);
                     this.fullScreenActive = false;
                 }
                 for (let i = 0; i < this.barriers.length; i++) {
@@ -196,39 +231,6 @@ class BlueJumpGame {
                 stroke(255);
                 // draw an arrow pointing to "play" button
                 this._showInstructions();
-                break;
-            case 1:
-                // TODO: cleanup
-                console.warn("deprecated gameMode detected");
-                break;
-                noStroke();
-                fill("rgba(0, 0, 0, 0.4)"); // TODO: is there an actual function for this?
-                rect(0, 0, window.screen.width, (BlueJumpGame.IS_SAFARI ? windowHeight : window.screen.height));
-                const xoff = width / 2 - 4.87 * BlueJumpGame.TEXT_SIZE;
-                if (!this.returned) {
-                    textSize(BlueJumpGame.TEXT_SIZE);
-                    textAlign(CENTER);
-                    if (floor(frameCount / 2) % 4 === 0) {
-                        text('loading', width / 2, height / 2);
-                    } else if (floor(frameCount / 2) % 4 === 1) {
-                        text('loading.', width / 2, height / 2);
-                    } else if (floor(frameCount / 2) % 4 === 2) {
-                        text('loading..', width / 2, height / 2);
-                    } else {
-                        text('loading...', width / 2, height / 2);
-                    }
-                } else {
-                    fill(255, 128, 0);
-                    textSize(BlueJumpGame.TEXT_SIZE);
-                    textAlign(CENTER);
-                    textSize(0.5 * BlueJumpGame.TEXT_SIZE);
-                    textAlign(LEFT);
-                    text('#', xoff, 1.7 * BlueJumpGame.TEXT_SIZE + 115);
-                    text('Player', xoff + 1.2 * BlueJumpGame.TEXT_SIZE, 1.7 * BlueJumpGame.TEXT_SIZE + 115);
-                    text('Score', xoff + 8 * BlueJumpGame.TEXT_SIZE, 1.7 * BlueJumpGame.TEXT_SIZE + 115);
-                    fill(255, 255, 255);
-                    // showRanks(xoff);
-                }
         }
     }
 
@@ -318,6 +320,17 @@ class BlueJumpGame {
             const z = 2 + Math.random() * 1.1;
             this.fakeBarriers.push(new Barrier(x, y, z, 0, 0, 0, BlueJumpGame.BARRIER_SCALE, 0.25 * BlueJumpGame.BARRIER_SCALE, new Sprite(txtr[0], txtr[1] / z, txtr[2] / z, txtr[3], txtr[4], txtr[5], txtr[6]), 150, h));
         }
+    }
+
+    _showCredits() {
+        textAlign(RIGHT);
+        textFont('arial');
+        textSize(0.3 * BlueJumpGame.TEXT_SIZE);
+        noStroke();
+        text('\u00A9', width - 0.3 * BlueJumpGame.BARRIER_SCALE - 2 * BlueJumpGame.TEXT_SIZE, height / 2);
+        textFont(BlueJumpGame.FONT);
+        textSize(0.2 * BlueJumpGame.TEXT_SIZE);
+        text('| 2016 | Nout Kleef', width - 0.3 * BlueJumpGame.BARRIER_SCALE, height / 2);
     }
 
     deviceOrientationHandler(e) {
