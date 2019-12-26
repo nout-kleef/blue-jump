@@ -366,7 +366,7 @@ class BlueJumpGame {
 }
 
 BlueJumpGame.AUTOJUMP = true;
-BlueJumpGame.DEBUG = true;
+BlueJumpGame.DEBUG = false;
 BlueJumpGame.LEVELCREATION = true;
 BlueJumpGame.LANDING_THRESHOLD = 25;
 BlueJumpGame.HORIZONTAL_SPEED = 11;
