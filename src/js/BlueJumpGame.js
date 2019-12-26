@@ -99,6 +99,7 @@ class BlueJumpGame {
 
     _initGame() {
         // initialise player
+        console.log(width, height);
         this.player = new Player( // TODO: refactor this. drastically.
             width / 2 - BlueJumpGame.BARRIER_SCALE / 3,
             height * 3 / 4,
@@ -128,8 +129,8 @@ class BlueJumpGame {
     _initBarriers() {
         this.barriers.push( // TODO: refactor this too
             new Barrier(
-                this.player.p.x + 0.5 * this.player.activities[this.player.activity].width - 0.5 * BlueJumpGame.BARRIER_SCALE,
-                this.player.p.y + this.player.activities[this.player.activity].height,
+                this.player.p.x + 0.5 * this.player.activities[this.player.activity].displayWidth - 0.5 * BlueJumpGame.BARRIER_SCALE,
+                this.player.p.y + this.player.activities[this.player.activity].displayHeight,
                 1,
                 0,
                 0,
@@ -148,86 +149,12 @@ class BlueJumpGame {
                 46
             )
         );
+        // finalise
+        this.pickNewHighest(0, true);
+        this.setMode(-1);
     }
 
-    _showBackground() {
-        noStroke();
-        for (let bg = 0; bg < 1; bg += 1 / BlueJumpGame.BACKGROUND_SHADES) {
-            const origin = this.player.stats.alive ? 0 : 2; // 01:alive, 23:dead
-            const shade = lerpColor(
-                this.colours[origin], this.colours[origin + 1], bg
-            );
-            fill(shade);
-            rect(0, height * bg, width, height * (bg + 1));
-        }
-    }
-
-    _showBarriers(showFakes) {
-        if (showFakes) {
-            let highestFake = this.fakeBarriers[0];
-            for (let fb = 0; fb < this.fakeBarriers.length; fb++) {
-                if (this.fakeBarriers[fb].p.y < highestFake.p.y)
-                    highestFake = this.fakeBarriers[fb]; // TODO: is this right?
-                this.fakeBarriers[fb].show();
-            }
-            if (this.fakeBarriers.length < BlueJumpGame.MAX_BARRIERS)
-                this._pickNewHighest(
-                    highestFake.p,
-                    true,
-                    this.fakeBarriers.length < BlueJumpGame.MAX_BARRIERS - 2
-                );
-        }
-        // draw the real barriers & find the highest
-        let highest = this.barriers[0];
-        for (let b = 0; b < this.barriers.length; b++) {
-            if (this.barriers[b].p.y < highest.p.y)
-                highest = this.barriers[b]; // TODO: is this right?
-            this.barriers[b].show();
-        }
-        return highest;
-    }
-
-    _showFloor(alive) {
-        if (alive) BlueJumpGame.spikesFloor.show(150, 46);
-        else BlueJumpGame.lavaFloor.show(150, 50);
-    }
-
-    _showScore(score) {
-        fill(0);
-        strokeWeight(3);
-        stroke(255);
-        textAlign(CENTER);
-        textSize(0.9 * BlueJumpGame.TEXT_SIZE);
-        text(score, width / 2, 0.8 * BlueJumpGame.TEXT_SIZE);
-    }
-
-    _showCredits() {
-        textAlign(RIGHT);
-        textFont('arial');
-        textSize(0.3 * BlueJumpGame.TEXT_SIZE);
-        noStroke();
-        text('\u00A9', width - 0.3 * BlueJumpGame.BARRIER_SCALE - 2 * BlueJumpGame.TEXT_SIZE, height / 2);
-        textFont(BlueJumpGame.FONT);
-        textSize(0.2 * BlueJumpGame.TEXT_SIZE);
-        text('| 2016 | Nout Kleef', width - 0.3 * BlueJumpGame.BARRIER_SCALE, height / 2);
-    }
-
-    _loadAssetPixels() {
-        // images
-        BlueJumpGame.dirtblock[0].loadPixels();
-        BlueJumpGame.spikes[0].loadPixels();
-        BlueJumpGame.brickblock0[0].loadPixels();
-        BlueJumpGame.brickblock1[0].loadPixels();
-        BlueJumpGame.transition[0].loadPixels();
-        BlueJumpGame.grave[0].loadPixels();
-        // sprites
-        BlueJumpGame.blueGuy02[0].loadPixels();
-        BlueJumpGame.blueGuy03[0].loadPixels();
-        BlueJumpGame.blueGuy04[0].loadPixels();
-        BlueJumpGame.lava[0].loadPixels();
-    }
-
-    _setGameMode(mode) {
+    setMode(mode) {
         switch (mode) {
             case -1:
                 this.gameMode = -1;
@@ -357,8 +284,8 @@ class BlueJumpGame {
         if (this.gameMode !== 1) {
             setTimeout(function () {
                 this.fullScreenActive = true;
-                this._setGameMode(0);
-            }.bind(this), 1000);
+                this.setMode(0);
+            }.bind(this), 600);
         }
     }
 
@@ -377,13 +304,11 @@ class BlueJumpGame {
             }
         }
         if (!pickRandom) {
-            const difficulty = Math.floor(this.player.stats.score / 2500) * 0.02 * BlueJumpGame.BARRIER_SCALE;
-            difficulty = constrain(difficulty, 0, 0.5 * BlueJumpGame.BARRIER_SCALE);
+            const difficulty = constrain(Math.floor(this.player.stats.score / 2500) * 0.02 * BlueJumpGame.BARRIER_SCALE, 0, 0.5 * BlueJumpGame.BARRIER_SCALE);
             const constr = BlueJumpGame.MOBILE_CONTROLS ? 0.5 : 0.80;
             const dir = Math.random() < 0.5 ? 1 : -1;
             const maxY = 0.5 * (BlueJumpGame.JUMP_POWER * BlueJumpGame.JUMP_POWER + BlueJumpGame.JUMP_POWER) / BlueJumpGame.GRAVITY;
-            const maxX = 1.7 * BlueJumpGame.JUMP_POWER * BlueJumpGame.HORIZONTAL_SPEED * constr * 1.2 + difficulty;
-            maxX = constrain(maxX, 0, width);
+            const maxX = constrain(1.7 * BlueJumpGame.JUMP_POWER * BlueJumpGame.HORIZONTAL_SPEED * constr * 1.2 + difficulty, 0, width);
             const increaseY = (0.3 + 0.7 * Math.random()) * maxY;
             const newX = constrain(oldPos.x + dir * (0.3 + 0.7 * Math.random()) * maxX, BlueJumpGame.MOVEMENT, width - BlueJumpGame.BARRIER_SCALE - BlueJumpGame.MOVEMENT);
             this.barriers.push(new Barrier(newX, oldPos.y - increaseY, 1, -3 + 6 * Math.random() * constr, 0, 0, BlueJumpGame.BARRIER_SCALE, 0.25 * BlueJumpGame.BARRIER_SCALE, new Sprite(txtr[0], txtr[1], txtr[2], txtr[3], txtr[4], txtr[5], txtr[6]), 150, h));

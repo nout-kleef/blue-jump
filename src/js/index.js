@@ -18,8 +18,19 @@ function preload() {
 }
 
 function setup() {
-    // initialise game instance
-    bj = new BlueJumpGame();
+    // finish up loading the assets
+    // images
+    BlueJumpGame.dirtblock[0].loadPixels();
+    BlueJumpGame.spikes[0].loadPixels();
+    BlueJumpGame.brickblock0[0].loadPixels();
+    BlueJumpGame.brickblock1[0].loadPixels();
+    BlueJumpGame.transition[0].loadPixels();
+    BlueJumpGame.grave[0].loadPixels();
+    // sprites
+    BlueJumpGame.blueGuy02[0].loadPixels();
+    BlueJumpGame.blueGuy03[0].loadPixels();
+    BlueJumpGame.blueGuy04[0].loadPixels();
+    BlueJumpGame.lava[0].loadPixels();
     // change behaviour depending on browser
     if (BlueJumpGame.IS_SAFARI) {
         createCanvas(window.screen.width, windowHeight);
@@ -28,6 +39,15 @@ function setup() {
     }
     BlueJumpGame.field =
         document.getElementById("defaultCanvas0").getContext("2d");
+    // initialise game instance
+    bj = new BlueJumpGame();
+    colorMode(RGB);
+    bj.colours = [
+        color(64, 112, 184),
+        color(191, 218, 235),
+        color(90, 0, 0),
+        color(200, 0, 0)
+    ];
     // keep speed similar across different devices
     if (BlueJumpGame.MOBILE_CONTROLS === 0) frameRate(30);
     else frameRate(27);

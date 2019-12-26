@@ -72,11 +72,11 @@ class Player {
         if (BlueJumpGame.MOBILE_CONTROLS) { // mobile controls
             this.v.x = BlueJumpGame.HORIZONTAL_SPEED * orientedMovement;
         } else { // keyboard controls
-            if ( // TODO: look up keycodes for a and d
-                (keyIsDown(37) /* || keyIsDown('a')*/ ) !== (keyIsDown(39) /* || keyIsDown('d')*/ )
+            if (
+                (keyIsDown(37) || keyIsDown(65)) !== (keyIsDown(39) || keyIsDown(68))
             ) {
                 if (this.stats.alive) this.walk();
-                if (keyIsDown(37) || keyIsDown('a'))
+                if (keyIsDown(37) || keyIsDown(65))
                     this.v.x = -BlueJumpGame.HORIZONTAL_SPEED;
                 else this.v.x = BlueJumpGame.HORIZONTAL_SPEED;
             }
@@ -111,7 +111,7 @@ class Player {
             if (this.collide(bj.barriers[b])) {
                 if (
                     this.p.y + this.activities[this.activity].displayHeight >= bj.barriers[b].p.y &&
-                    this.p.y + this.activities[this.activity].displayHeight - bj.barriers[b].p.y <= LANDING_THRESHOLD &&
+                    this.p.y + this.activities[this.activity].displayHeight - bj.barriers[b].p.y <= BlueJumpGame.LANDING_THRESHOLD &&
                     this.v.y > 0
                 ) {
                     this.land(
@@ -194,7 +194,7 @@ class Player {
                         bj.textAnimations.push(
                             new Text("GAME OVER!", width * 0.8, 1.5 * txtSize, frameRate() / 3, Infinity, [0, 0, 0], frameCount, width / 2, 100)
                         );
-                        gameMode(1);
+                        this.setMode(1);
                         this.buried = true;
                     }
                 }, 1000 / frameRate());
